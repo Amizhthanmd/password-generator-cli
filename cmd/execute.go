@@ -48,7 +48,6 @@ and symbols for added complexity. Ideal for creating strong passwords that
 enhance security for online accounts and applications.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(isUpperCase, isLowerCase, isNumbers, isSpecialChar)
 		includes := generateIncludes(isUpperCase, isLowerCase, isNumbers, isSpecialChar)
 		password, err := generatePassword(length, includes)
 		if err != nil {
