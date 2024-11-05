@@ -13,6 +13,7 @@ var (
 	isNumbers     bool
 	isSpecialChar bool
 	length        int
+	password      string
 )
 
 var rootCmd = &cobra.Command{
@@ -22,7 +23,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	rootCmd.AddCommand(generate)
+	rootCmd.AddCommand(generate, checkStrength)
 	commandFlags()
 
 	if err := rootCmd.Execute(); err != nil {
@@ -32,11 +33,15 @@ func Execute() {
 }
 
 func commandFlags() {
+	// Password generate flags
 	generate.Flags().BoolVarP(&isUpperCase, "upper-case", "u", true, "Includes the upper case")
 	generate.Flags().BoolVarP(&isLowerCase, "lower-case", "l", true, "Includes the lower case")
 	generate.Flags().BoolVarP(&isNumbers, "numbers", "n", true, "Includes the numbers")
 	generate.Flags().BoolVarP(&isSpecialChar, "special-characters", "s", true, "Includes the special characters")
 	generate.Flags().IntVarP(&length, "length", "t", 12, "Length of the password")
+
+	// Password stength check flags
+	checkStrength.Flags().StringVarP(&password, "password", "p", "", "Password to check strength")
 }
 
 var generate = &cobra.Command{
@@ -54,6 +59,30 @@ enhance security for online accounts and applications.`,
 			fmt.Println(err)
 			return
 		}
+		if isUpperCase && isLowerCase && isNumbers && isSpecialChar {
+			if CheckUpperCase(password) && CheckLowerCase(password) && CheckSpecialCharacters(password) && CheckNumbers(password) {
+				fmt.Printf("Generated Password: %s\n", password)
+				return
+			}
+		}
 		fmt.Printf("Generated Password: %s\n", password)
+	},
+}
+
+var checkStrength = &cobra.Command{
+	Use:   "checkstrength",
+	Short: "Check the strength of the password",
+	Long:  "Check the strength of the password",
+
+	Run: func(cmd *cobra.Command, args []string) {
+		if password == "" {
+			fmt.Println("Please provide the password.")
+			return
+		}
+		if CheckPasswordStrength(password) {
+			fmt.Printf("This %s password is strong\n", password)
+		} else {
+			fmt.Printf("This %s password is weak\n", password)
+		}
 	},
 }

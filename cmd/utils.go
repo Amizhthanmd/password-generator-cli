@@ -3,6 +3,14 @@ package cmd
 import (
 	"crypto/rand"
 	"math/big"
+	"strings"
+)
+
+const (
+	lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
+	uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	numbers          = "0123456789"
+	specialChars     = "!@#$%^&*()-_+=<>?"
 )
 
 func generatePassword(length int, includes string) (string, error) {
@@ -18,14 +26,8 @@ func generatePassword(length int, includes string) (string, error) {
 }
 
 func generateIncludes(isUpperCase, isLowerCase, isNumbers, isSpecialChar bool) string {
-	const (
-		lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
-		uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		numbers          = "0123456789"
-		specialChars     = "!@#$%^&*()-_+=<>?"
-	)
-
 	var includes string
+
 	if isLowerCase {
 		includes += lowercaseLetters
 	}
@@ -40,4 +42,49 @@ func generateIncludes(isUpperCase, isLowerCase, isNumbers, isSpecialChar bool) s
 	}
 
 	return includes
+}
+
+func CheckUpperCase(password string) bool {
+	for _, c := range password {
+		if c >= 'A' && c <= 'Z' {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckLowerCase(password string) bool {
+	for _, c := range password {
+		if c >= 'a' && c <= 'z' {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckNumbers(password string) bool {
+	for _, c := range password {
+		if c >= '0' && c <= '9' {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckSpecialCharacters(password string) bool {
+	for _, c := range password {
+		if strings.ContainsRune(specialChars, c) {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckPasswordStrength(password string) bool {
+	if len(password) >= 12 && CheckUpperCase(password) &&
+		CheckLowerCase(password) && CheckSpecialCharacters(password) &&
+		CheckNumbers(password) {
+		return true
+	}
+	return false
 }
